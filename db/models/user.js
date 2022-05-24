@@ -6,6 +6,8 @@ module.exports = {
   // add your database adapter fns here
   getAllUsers,
   createUser,
+  updateUser,
+  softDeleteUser,
 };
 
 async function getAllUsers() {
@@ -38,6 +40,53 @@ async function createUser({ username, password, email }) {
     );
 
     delete user.password;
+    return user;
+  } catch (err) {
+    throw err;
+  }
+}
+
+async function updateUser(userId, updateFields) {
+  try {
+    console.log(Object.keys(updateFields).length);
+
+    // this removes any undefined fields from our API req.body
+    for (const key in updateFields) {
+      if (updateFields[key] === undefined) {
+        delete updateFields[key];
+      }
+    }
+
+    console.log(Object.keys(updateFields).length);
+
+    const setString = Object.keys(updateFields)
+      .map((key, idx) => `${key} = $${idx + 2}`)
+      .join(", ");
+
+    console.log(setString);
+
+    const {
+      rows: [user],
+    } = await client.query(
+      `
+      UPDATE users
+      SET ${setString}
+      WHERE id = $1
+      RETURNING *;
+    `,
+      [userId, ...Object.values(updateFields)]
+    );
+
+    return user;
+  } catch (err) {
+    throw err;
+  }
+}
+
+async function softDeleteUser(userId) {
+  try {
+    const now = new Date();
+    const user = await updateUser(userId, { deleted_at: now.toISOString() });
     return user;
   } catch (err) {
     throw err;

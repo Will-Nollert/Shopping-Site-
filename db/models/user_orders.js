@@ -37,14 +37,8 @@ async function getUserOrdersByUserId(userId) {
     const orders = [];
 
     for (let i = 0; i < userOrders.length; i++) {
-      // how do we get products associated with this order?
-      // easy :) we do an n + 1 query on the userOrders[i]
-
       const userOrder = userOrders[i];
-
-      // this needs to be implemented in the OrderDetails adapter
       const orderDetails = await getOrderDetailsByOrderId(userOrder.order_id);
-
       orders.push(orderDetails);
     }
 

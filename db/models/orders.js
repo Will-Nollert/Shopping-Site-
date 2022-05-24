@@ -6,6 +6,8 @@ module.exports = {
   createOrder,
   getAllOrders,
   getOrderDetailsByOrderId,
+  destroyOrder,
+  updateOrder,
 };
 async function createOrder({ status, created_at }) {
   try {
@@ -55,5 +57,42 @@ async function getOrderDetailsByOrderId(orderId) {
     return orderDetails;
   } catch (err) {
     throw err;
+  }
+}
+
+async function destroyOrder(orderDetailsId) {
+  try {
+    const {
+      rows: [orderDetails],
+    } = await client.query(
+      `
+      DELETE FROM order_details
+      WHERE id=$1
+      RETURNING *;
+    `,
+      [orderDetailsId]
+    );
+    return orderDetails;
+  } catch (error) {
+    throw error;
+  }
+}
+
+async function updateOrder({ id, status, created_at }) {
+  try {
+    const {
+      rows: [orderDetails],
+    } = await client.query(
+      `
+      UPDATE order_details
+      SET status=$1, created_at=$2
+      WHERE id=$3
+      RETURNING *;
+    `,
+      [status, created_at, id]
+    );
+    return orderDetails;
+  } catch (error) {
+    throw error;
   }
 }
