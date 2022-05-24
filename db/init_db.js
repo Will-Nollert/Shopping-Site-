@@ -234,7 +234,10 @@ async function testDB() {
     console.log("calling getOrderDetailsByOrderId ");
     const order1 = await Order.getOrderDetailsByOrderId(1);
     console.log("Result:", order1);
-    console.log("%cLog Message", "color: orange");
+
+    console.log("calling getUserOrderByUserId ");
+    const userOrder = await UserOrders.getUserOrdersByUserId(2);
+    console.log("Result:", userOrder);
   } catch (error) {
     console.log("Error during testDB");
     throw error;
