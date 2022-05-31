@@ -1,6 +1,6 @@
 // grab our db client connection to use with our adapters
 const client = require("../client");
-const { getOrderDetailsByOrderId } = require("./orders");
+const { getOrderByOrderId } = require("./orders");
 
 module.exports = {
   // add your database adapter fns here
@@ -38,7 +38,7 @@ async function getUserOrdersByUserId(userId) {
 
     for (let i = 0; i < userOrders.length; i++) {
       const userOrder = userOrders[i];
-      const orderDetails = await getOrderDetailsByOrderId(userOrder.order_id);
+      const orderDetails = await getOrderByOrderId(userOrder.order_id);
       orders.push(orderDetails);
     }
 

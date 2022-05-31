@@ -143,7 +143,6 @@ async function getUserById(userID) {
 
     const userOrders = await getUserOrdersByUserId(userID);
 
-    console.log({ userOrders });
     user.orders = userOrders;
     return user;
   } catch (err) {

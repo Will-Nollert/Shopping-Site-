@@ -59,7 +59,7 @@ async function createTables() {
       created_at DATE DEFAULT now()
     );
     CREATE TABLE user_order_items (
-      order_item_number SERIAL PRIMARY KEY,
+      order_item_id SERIAL PRIMARY KEY,
       order_id INTEGER REFERENCES orders (id),
       product_id INTEGER REFERENCES products (id),
       quantity INTEGER NOT NULL,
@@ -177,6 +177,10 @@ async function createInitalOrders() {
       status: "settled",
       created_at: new Date().toISOString(),
     });
+    await Order.createOrder({
+      status: "settled",
+      created_at: new Date().toISOString(),
+    });
   } catch (error) {
     console.error("Error creating Inital Orders!");
     throw error;
@@ -192,7 +196,7 @@ async function createInitalUser_order_items() {
       product_id: 1,
       quantity: 1,
       price_paid: 111,
-      created_at: new Date("1995-12-17T03:24:00"),
+      created_at: new Date("1994-12-17T03:24:00"),
     });
     await UserOrderItems.createUser_order_items({
       order_id: 1,
@@ -203,10 +207,17 @@ async function createInitalUser_order_items() {
     });
     await UserOrderItems.createUser_order_items({
       order_id: 2,
-      product_id: 1,
+      product_id: 3,
       quantity: 3,
       price_paid: 333,
-      created_at: null,
+      created_at: new Date("1996-12-17T03:24:00"),
+    });
+    await UserOrderItems.createUser_order_items({
+      order_id: 3,
+      product_id: 1,
+      quantity: 5,
+      price_paid: 555,
+      created_at: new Date("2021-12-17T03:24:00"),
     });
   } catch (error) {
     console.error("Error creating Inital Order Items!");
@@ -220,6 +231,10 @@ async function createInitalUser_orders() {
     await UserOrders.createUser_orders({
       userId: 1,
       orderId: 1,
+    });
+    await UserOrders.createUser_orders({
+      userId: 1,
+      orderId: 3,
     });
     await UserOrders.createUser_orders({
       userId: 2,
@@ -243,8 +258,8 @@ async function testDB() {
     const orders = await Order.getAllOrders();
     console.log("Result:", orders);
 
-    console.log("calling getOrderDetailsByOrderId ");
-    const order1 = await Order.getOrderDetailsByOrderId(1);
+    console.log("calling getOrderByOrderId ");
+    const order1 = await Order.getOrderByOrderId(1);
     console.log("Result:", order1);
 
     console.log("calling getUserOrderByUserId ");
