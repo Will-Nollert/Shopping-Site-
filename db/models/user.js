@@ -1,6 +1,7 @@
 // grab our db client connection to use with our adapters
 const client = require("../client");
 const bcrypt = require("bcrypt");
+const { getUserOrdersByUserId } = require("./user_orders");
 
 module.exports = {
   // add your database adapter fns here
@@ -8,6 +9,9 @@ module.exports = {
   createUser,
   updateUser,
   softDeleteUser,
+  getUserByUserName,
+  getUser,
+  getUserById,
 };
 
 async function getAllUsers() {
@@ -87,6 +91,60 @@ async function softDeleteUser(userId) {
   try {
     const now = new Date();
     const user = await updateUser(userId, { deleted_at: now.toISOString() });
+    return user;
+  } catch (err) {
+    throw err;
+  }
+}
+
+async function getUserByUserName(username) {
+  try {
+    const {
+      rows: [user],
+    } = await client.query(
+      `
+      SELECT * from users
+      WHERE username = $1;
+      `,
+      [username]
+    );
+    return user;
+  } catch (err) {
+    throw err;
+  }
+}
+
+async function getUser({ username, password }) {
+  try {
+    const user = await getUserByUserName(username);
+
+    const isPasswordMatch = await bcrypt.compare(password, user.password);
+
+    if (isPasswordMatch) {
+      delete user.password;
+      return user;
+    }
+  } catch (err) {
+    throw err;
+  }
+}
+
+async function getUserById(userID) {
+  try {
+    const {
+      rows: [user],
+    } = await client.query(
+      `
+    SELECT * FROM users
+    WHERE id=$1;
+    `,
+      [userID]
+    );
+
+    const userOrders = await getUserOrdersByUserId(userID);
+
+    console.log({ userOrders });
+    user.orders = userOrders;
     return user;
   } catch (err) {
     throw err;

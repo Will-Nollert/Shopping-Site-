@@ -5,7 +5,7 @@ module.exports = {
   // add your database adapter fns here
   createOrder,
   getAllOrders,
-  getOrderDetailsByOrderId,
+  getOrderByOrderId,
   destroyOrder,
   updateOrder,
 };
@@ -41,7 +41,7 @@ async function getAllOrders() {
   }
 }
 
-async function getOrderDetailsByOrderId(orderId) {
+async function getOrderByOrderId(orderId) {
   try {
     const {
       rows: [orderDetails],

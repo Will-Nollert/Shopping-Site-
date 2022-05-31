@@ -203,7 +203,7 @@ async function createInitalUser_order_items() {
     });
     await UserOrderItems.createUser_order_items({
       order_id: 2,
-      socks_id: 1,
+      product_id: 1,
       quantity: 3,
       price_paid: 333,
       created_at: null,
