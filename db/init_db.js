@@ -31,18 +31,19 @@ async function createTables() {
     console.log("Starting to build tables...");
 
     await client.query(`
+    CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
     CREATE TYPE order_status AS ENUM('pending', 'settled');
 
     CREATE TABLE users (
-        id SERIAL PRIMARY KEY,
-        username varchar(255) UNIQUE NOT NULL,
-        password varchar(255) NOT NULL,
-        email VARCHAR(255),
-        deleted_at DATE DEFAULT NULL
+      id uuid DEFAULT public.uuid_generate_v4() NOT NULL PRIMARY KEY,
+      username varchar(255) UNIQUE NOT NULL,
+      password varchar(255) NOT NULL,
+      email VARCHAR(255),
+      deleted_at DATE DEFAULT NULL
       );
-     CREATE TABLE inventory (
-         id SERIAL PRIMARY KEY,
-         quantity INTEGER DEFAULT 0
+    CREATE TABLE inventory (
+      id SERIAL PRIMARY KEY,
+      quantity INTEGER DEFAULT 0
      );
     CREATE TABLE products (
       id SERIAL PRIMARY KEY,
@@ -68,7 +69,7 @@ async function createTables() {
     );
      CREATE TABLE user_orders (
       id SERIAL PRIMARY KEY,
-      user_id INTEGER REFERENCES users (id),
+      user_id uuid REFERENCES users (id),
       order_id INTEGER REFERENCES orders (id),
       UNIQUE(user_id, order_id)
       );
@@ -84,7 +85,6 @@ async function dropTables() {
   try {
     console.log("Starting to drop tables...");
 
-    // have to make sure to drop in correct order
     await client.query(`
       DROP TABLE IF EXISTS user_order_items;
       DROP TABLE IF EXISTS user_orders;
@@ -93,7 +93,8 @@ async function dropTables() {
       DROP TABLE IF EXISTS inventory;
       DROP TABLE IF EXISTS users;
 
-       DROP TYPE IF EXISTS  order_status;
+      DROP TYPE IF EXISTS  order_status;
+      DROP EXTENSION IF EXISTS "uuid-ossp";
     `);
 
     console.log("Finished dropping tables!");
@@ -227,17 +228,21 @@ async function createInitalUser_order_items() {
 
 async function createInitalUser_orders() {
   try {
+    const users = await User.getAllUsers();
+    console.log("USER 1 ID", users[0].id);
+    console.log("USER 2 ID", users[1].id);
+
     console.log("starting to create User's Orders");
     await UserOrders.createUser_orders({
-      userId: 1,
+      userId: user1[0].id,
       orderId: 1,
     });
     await UserOrders.createUser_orders({
-      userId: 1,
+      userId: users[0].id,
       orderId: 3,
     });
     await UserOrders.createUser_orders({
-      userId: 2,
+      userId: users[1].id,
       orderId: 2,
     });
   } catch (error) {
@@ -248,6 +253,8 @@ async function createInitalUser_orders() {
 
 async function testDB() {
   try {
+    const user1 = await User.getAllUsers();
+    console.log("USER 1 ID", user1[0].id);
     console.log("Starting to test database...");
 
     console.log("Calling getAllUsers");
@@ -263,7 +270,7 @@ async function testDB() {
     console.log("Result:", order1);
 
     console.log("calling getUserOrderByUserId ");
-    const userOrder = await UserOrders.getUserOrdersByUserId(2);
+    const userOrder = await UserOrders.getUserOrdersByUserId(user1[0].id);
     console.log("Result:", userOrder);
   } catch (error) {
     console.log("Error during testDB");
