@@ -234,7 +234,7 @@ async function createInitalUser_orders() {
 
     console.log("starting to create User's Orders");
     await UserOrders.createUser_orders({
-      userId: user1[0].id,
+      userId: users[0].id,
       orderId: 1,
     });
     await UserOrders.createUser_orders({
@@ -254,7 +254,6 @@ async function createInitalUser_orders() {
 async function testDB() {
   try {
     const user1 = await User.getAllUsers();
-    console.log("USER 1 ID", user1[0].id);
     console.log("Starting to test database...");
 
     console.log("Calling getAllUsers");
