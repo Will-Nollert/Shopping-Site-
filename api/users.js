@@ -57,8 +57,8 @@ usersRouter.post("/login", async (req, res, next) => {
 
 usersRouter.patch("/:id", async (req, res, next) => {
   try {
-    const { username, first_name, email } = req.body;
-    const updateFields = { username, first_name, email };
+    const { username, email } = req.body;
+    const updateFields = { username, email };
     const user = await User.updateUser(req.params.id, updateFields);
     res.status(204).send(user);
   } catch (err) {

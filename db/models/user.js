@@ -52,8 +52,6 @@ async function createUser({ username, password, email }) {
 
 async function updateUser(userId, updateFields) {
   try {
-    console.log(Object.keys(updateFields).length);
-
     // this removes any undefined fields from our API req.body
     for (const key in updateFields) {
       if (updateFields[key] === undefined) {
@@ -61,13 +59,9 @@ async function updateUser(userId, updateFields) {
       }
     }
 
-    console.log(Object.keys(updateFields).length);
-
     const setString = Object.keys(updateFields)
       .map((key, idx) => `${key} = $${idx + 2}`)
       .join(", ");
-
-    console.log(setString);
 
     const {
       rows: [user],
