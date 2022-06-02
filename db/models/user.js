@@ -4,11 +4,11 @@ const bcrypt = require("bcrypt");
 const { getUserOrdersByUserId } = require("./user_orders");
 
 module.exports = {
-  // add your database adapter fns here
   getAllUsers,
   createUser,
   updateUser,
   softDeleteUser,
+  hardDeleteUser,
   getUserByUserName,
   getUser,
   getUserById,
@@ -86,6 +86,26 @@ async function softDeleteUser(userId) {
     const now = new Date();
     const user = await updateUser(userId, { deleted_at: now.toISOString() });
     return user;
+  } catch (err) {
+    throw err;
+  }
+}
+
+async function hardDeleteUser(userId) {
+  try {
+    await client.query(
+      `
+      DELETE FROM users
+      WHERE id = $1;
+    
+    `,
+      [userId]
+    );
+
+    return {
+      ok: true,
+      message: `user with id ${userId} was successfully deleted!`,
+    };
   } catch (err) {
     throw err;
   }
