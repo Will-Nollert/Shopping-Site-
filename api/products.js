@@ -58,10 +58,8 @@ productsRouter.patch(
 
       const updatedSock = await Sock.updateSock(sockId, {
         inventory_id: inventoryId,
-        quantity,
+        quantity: quantity,
       });
-
-      console.log({ updatedSock });
 
       res.status(204).send(updatedSock);
     } catch (err) {

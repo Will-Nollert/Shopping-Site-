@@ -118,14 +118,10 @@ async function updateProduct(productId, updateFields) {
     // and we don't even need to check if it exists
     // because by definition we've already created an inventory record
     // every time we add a new sock to our db
-    const {
-      quantity,
-      inventory_id: inventoryId,
-      category_id: categoryId,
-    } = updateFields;
+    const { quantity, inventory_id: inventoryId } = updateFields;
 
     if (!isNaN(+quantity)) {
-      await updateInventory(inventoryId, categoryId, quantity);
+      await updateInventory(inventoryId, quantity);
       delete updateFields.quantity;
     }
 
@@ -150,7 +146,7 @@ async function updateProduct(productId, updateFields) {
 
     // second, grab the sock record via the getSockById adapter
     // this will give us access to the JOIN fields like category, inventory
-    const product = await getSockById(productId);
+    const product = await getProductById(productId);
     return product;
   } catch (err) {
     throw err;

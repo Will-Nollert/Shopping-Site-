@@ -2,6 +2,7 @@ module.exports = {
   User: require("./user"),
   Product: require("./products"),
   Order: require("./orders"),
+  Inventory: require("./inventory.js"),
   UserOrderItems: require("./user_order_items.js"),
   UserOrders: require("./user_orders.js"),
   // add each model to your exports object here

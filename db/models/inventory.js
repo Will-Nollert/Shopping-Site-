@@ -3,6 +3,7 @@ const client = require("../client");
 module.exports = {
   createInventory,
   updateInventory,
+  destroyInventory,
 };
 
 async function createInventory({ quantity }) {
@@ -43,6 +44,29 @@ async function updateInventory(inventoryId, quantity) {
       [quantity, inventoryId]
     );
 
+    return inventory;
+  } catch (err) {
+    throw err;
+  }
+}
+
+async function destroyInventory(inventoryId) {
+  try {
+    if (!inventoryId) {
+      throw new Error(
+        "Please supply an inventory_id to delete an inventory record"
+      );
+    }
+    const {
+      rows: [inventory],
+    } = await client.query(
+      `
+      DELETE FROM inventory
+      WHERE id=$1
+      RETURNING *;
+      `,
+      [inventoryId]
+    );
     return inventory;
   } catch (err) {
     throw err;
